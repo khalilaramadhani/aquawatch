@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AquaWatch | Water Quality Monitor</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f7fb;
+      color: #17324d;
+    }
+    header {
+      background: #073b65;
+      color: white;
+      padding: 24px 7%;
+    }
+    header h1 { margin: 0 0 8px; }
+    header p { margin: 0; color: #c9e6f7; }
+    main { max-width: 1100px; margin: auto; padding: 28px 20px; }
+    .notice {
+      padding: 12px 16px;
+      background: #fff4d6;
+      border-radius: 10px;
+      margin-bottom: 22px;
+      font-size: 14px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: white;
+      padding: 22px;
+      border-radius: 14px;
+      box-shadow: 0 3px 14px #17324d10;
+    }
+    .card h3 { margin-top: 0; color: #587187; font-size: 14px; }
+    .value { font-size: 32px; font-weight: bold; margin: 12px 0; }
+    .sub { color: #72869a; font-size: 13px; }
+    .status { font-weight: bold; color: #087e68; }
+    section { margin-top: 28px; }
+    .bars { display: flex; align-items: end; gap: 12px; height: 150px; padding-top: 20px; }
+    .bar {
+      flex: 1;
+      min-width: 12px;
+      background: #168cbd;
+      border-radius: 6px 6px 0 0;
+      position: relative;
+    }
+    .bar span {
+      position: absolute;
+      bottom: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+    }
+    button {
+      background: #087eae;
+      color: white;
+      border: 0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      margin-top: 18px;
+    }
+    footer { text-align: center; padding: 28px; color: #72869a; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>💧 AquaWatch</h1>
+    <p>IoT Water Quality Monitoring System</p>
+  </header>
+
+  <main>
+    <div class="notice">
+      Mode demo: data masih berupa simulasi, belum terhubung ke sensor fisik.
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>pH Air · Titik 1</h3>
+        <div class="value" id="ph1">7.1</div>
+        <div class="sub">Skala pH</div>
+      </div>
+      <div class="card">
+        <h3>Kekeruhan · Titik 1</h3>
+        <div class="value" id="turb1">12</div>
+        <div class="sub">Unit simulasi</div>
+      </div>
+      <div class="card">
+        <h3>pH Air · Titik 2</h3>
+        <div class="value" id="ph2">6.8</div>
+        <div class="sub">Skala pH</div>
+      </div>
+      <div class="card">
+        <h3>Kekeruhan · Titik 2</h3>
+        <div class="value" id="turb2">18</div>
+        <div class="sub">Unit simulasi</div>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2>Status Pemantauan</h2>
+      <p id="status1">Titik 1: Dalam rentang demo</p>
+      <p id="status2">Titik 2: Dalam rentang demo</p>
+      <p class="sub">Status ini hanya contoh algoritma, bukan sertifikasi air aman.</p>
+      <button onclick="simulate()">Simulasikan pembacaan baru</button>
+    </section>
+
+    <section class="card">
+      <h2>Grafik Kekeruhan · Data Demo</h2>
+      <div class="bars" id="chart">
+        <div class="bar" style="height:35%"><span>1</span></div>
+        <div class="bar" style="height:48%"><span>2</span></div>
+        <div class="bar" style="height:42%"><span>3</span></div>
+        <div class="bar" style="height:65%"><span>4</span></div>
+        <div class="bar" style="height:54%"><span>5</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>AquaWatch · Proyek IoT Mahasiswa</footer>
+
+  <script>
+    let previousTurbidity = [12, 18];
+
+    function classify(ph, turbidity) {
+      if (ph < 6.5 || ph > 8.5 || turbidity > 50) {
+        return "Perlu pemeriksaan";
+      }
+      return "Dalam rentang demo";
+    }
+
+    function simulate() {
+      const ph1 = +(6 + Math.random() * 3).toFixed(1);
+      const ph2 = +(6 + Math.random() * 3).toFixed(1);
+      const turb1 = Math.floor(Math.random() * 70);
+      const turb2 = Math.floor(Math.random() * 70);
+
+      document.getElementById("ph1").textContent = ph1;
+      document.getElementById("ph2").textContent = ph2;
+      document.getElementById("turb1").textContent = turb1;
+      document.getElementById("turb2").textContent = turb2;
+
+      document.getElementById("status1").textContent =
+        "Titik 1: " + classify(ph1, turb1);
+      document.getElementById("status2").textContent =
+        "Titik 2: " + classify(ph2, turb2);
+
+      const changes = [
+        Math.abs(turb1 - previousTurbidity[0]),
+        Math.abs(turb2 - previousTurbidity[1])
+      ];
+
+      document.getElementById("status1").textContent +=
+        changes[0] > 20 ? " · Perubahan signifikan" : "";
+      document.getElementById("status2").textContent +=
+        changes[1] > 20 ? " · Perubahan signifikan" : "";
+
+      previousTurbidity = [turb1, turb2];
+
+      const chart = document.getElementById("chart");
+      chart.innerHTML = "";
+      [turb1, turb2, ...Array.from({length: 3}, () =>
+        Math.floor(Math.random() * 70))].forEach((v, i) => {
+        const bar = document.createElement("div");
+        bar.className = "bar";
+        bar.style.height = Math.max(5, v / 70 * 100) + "%";
+        const label = document.createElement("span");
+        label.textContent = i + 1;
+        bar.appendChild(label);
+        chart.appendChild(bar);
+      });
+    }
+  </script>
+</body>
+</html>
